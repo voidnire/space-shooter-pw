@@ -3,8 +3,8 @@ import { TAMX, TAMY } from "./config.js"
 class Space {
   constructor() {
     this.element = document.getElementById("space")
-    this.element.style.width = `${TAMX}px`
-    this.element.style.height = `${TAMY}px`
+    this.element.style.width = "100vw"//`${TAMX}px`
+    this.element.style.height = "100vh"//`${TAMY}px`
     this.element.style.backgroundPositionY = "0px"
   }
   move() {
