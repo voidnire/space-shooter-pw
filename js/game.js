@@ -1,15 +1,56 @@
 import { FPS } from "./config.js"
 import { space } from "./space.js"
 import { ship } from "./ship.js"
+
 import { createLife, loseLife } from "./life.js" 
+import { score } from "./score.js"  // Importando a classe Score
 
 
 import { createRandomEnemyShip, moveEnemyShips } from "./enemyShip.js"
+import { createRandomEnemyMeteor, moveEnemyMeteors } from "./enemyMeteor.js"
+import { createRandomEnemyUFO, moveEnemyUFOs } from "./enemyUFO.js"
+
+let gameStarted = false;
+let gamePaused = false;  
 
 function init() {
   createInitialLives(); 
+  score.updateDisplay();
+
+  window.addEventListener("keydown", (e) => {
+    if (e.key === " " && !gameStarted) { // press space to start
+      startGame();  // Inicia o jogo
+    }
+    // pause event
+    if (e.key === "p") {
+      togglePause(); 
+    }
+
+    // change ship direction events
+    if (e.key === "ArrowLeft") ship.changeDirection(-1)
+    if (e.key === "ArrowRight") ship.changeDirection(+1)
+  });
+
+  
+
+}
+
+//START
+function startGame(){
+  gameStarted = true;
   setInterval(run, 1000 / FPS)
 }
+
+//PAUSE
+function togglePause() {
+  gamePaused = !gamePaused; 
+  if (gamePaused) {
+    console.log("Jogo pausado");
+  } else {
+    console.log("Jogo retomado");
+  }
+}
+
 
 function createInitialLives() {
   // Cria as 3 vidas iniciais
@@ -18,35 +59,30 @@ function createInitialLives() {
   }
 }
 
-window.addEventListener("keydown", (e) => {
-  if (e.key === "ArrowLeft") ship.changeDirection(-1)
-  if (e.key === "ArrowRight") ship.changeDirection(+1)
 
-  ///if (e.key === "p") { togglePause(); }
-  })
-
-//let gamePaused = false;
-
-//function togglePause() {
-//  gamePaused = !gamePaused; // Alterna entre pausa e execução
-//}
 
 function run() {
   //if (gamePaused) return;
 
-
+  if (!gameStarted || gamePaused) return;
 
   //if (lives.length === 0) {
   //  endGame();
   //  return;
   //}
 
-
   space.move()
   ship.move()
+
   createRandomEnemyShip()
+  createRandomEnemyMeteor()
+  //createRandomEnemyUFO()
+
   moveEnemyShips()
+  moveEnemyMeteors()
+  //moveEnemyUFOs()
   //checkCollisions();
+
 
 }
 
@@ -59,20 +95,26 @@ function checkCollisions() {
   //   loseLife(); // Perde uma vida
   //   resetShipPosition(); // Reseta a posição da nave
   // }
+   // Supondo que você tenha um inimigo destruído, vamos dar pontos:
+
+  const pointsForDestroyingEnemy = 10; // Exemplo, você pode variar isso dependendo do tipo de inimigo
+  score.increase(pointsForDestroyingEnemy);  // Aumenta a pontuação
+
 }
 
 function endGame() {
-  // Exibe uma mensagem de game over e o botão para reiniciar
+  // game over message
   alert("Loser Loser Loser! Você perdeu todas as vidas.");
-  // Aqui você pode reiniciar o jogo, resetar as variáveis, etc.
+  // reset game 
   resetGame();
 }
 
 function resetGame() {
-  // Reseta o estado do jogo, as vidas e outros elementos
-  lives.length = 0; // Limpa a lista de vidas
-  createInitialLives(); // Cria as vidas novamente
-  // Aqui você pode resetar outros elementos como a pontuação, inimigos, etc.
+  // reset game state + lives + score
+  lives.length = 0; 
+  score.points = 0; 
+  createInitialLives(); 
+  score.updateDisplay(); 
 }
 
 

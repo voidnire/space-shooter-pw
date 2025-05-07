@@ -8,7 +8,7 @@ class Life {
     this.element.src = "assets/png/life.png"
     this.element.style.position = "absolute"; 
     this.element.style.top = "20px"
-    this.element.style.right = `${30 + index * 40}px`
+    this.element.style.right = `${100 + index * 40}px`
     space.element.appendChild(this.element)
   }
 
